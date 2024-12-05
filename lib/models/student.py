@@ -215,7 +215,19 @@ class Student:
             name = row[1]
             grade = row[2]
             teacher_id = row[3]
-            teacher = next((t for t in Teacher.all if getattr(t, 'id', None) == teacher_id), None)
+            teacher = next((t for t in Teacher.all if t.get_id() == teacher_id), None)
+        
+            if not teacher:
+                teacher_sql = "SELECT * FROM teachers WHERE id = ?"
+                CURSOR.execute(teacher_sql, (teacher_id,))
+                teacher_row = CURSOR.fetchone()
+            
+                if teacher_row:
+                    teacher_name = teacher_row[1]
+                    teacher_subject = teacher_row[2]
+                    teacher = Teacher(teacher_name, teacher_subject)
+                    Teacher.all.append(teacher)
+            
             if teacher:
                 student = cls(name, grade, teacher)
                 cls.all.append(student)
