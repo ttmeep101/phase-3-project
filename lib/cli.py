@@ -1,4 +1,3 @@
-
 from functions import (
     create_tables,
     exit_program,
